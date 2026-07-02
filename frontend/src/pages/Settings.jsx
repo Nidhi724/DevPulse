@@ -6,12 +6,12 @@ import { motion } from 'framer-motion';
 const Settings = () => {
   const { user, profile, logout } = useAuth();
 
-  const accountCreatedDate = user?.createdAt 
-    ? new Date(user.createdAt).toLocaleDateString(undefined, { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
+  const accountCreatedDate = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
     : 'Recently';
 
   return (
@@ -31,7 +31,7 @@ const Settings = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Column: Fast shortcuts navigation */}
         <div className="lg:col-span-1 space-y-6">
           <div className="glass-card p-6 border-slate-800 space-y-6 bg-slate-900/10">
@@ -47,7 +47,7 @@ const Settings = () => {
                 <FiSliders /> Theme Preferences
               </div>
               <div className="p-3 rounded-xl hover:bg-slate-900/50 hover:text-slate-200 cursor-pointer transition-colors flex items-center gap-2">
-                <FiInfo /> About DevPulse AI
+                <FiInfo /> About DevPulse
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ const Settings = () => {
 
         {/* Right Columns: Forms grids */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* Account information card */}
           <div className="glass-card p-6 border-slate-800 space-y-6">
             <div className="pb-4 border-b border-slate-800/60">
@@ -99,9 +99,9 @@ const Settings = () => {
 
             <div className="space-y-4 text-xs font-semibold">
               <p className="text-slate-400 font-medium leading-relaxed">
-                Choose your default terminal IDE skin. Currently, DevPulse AI strictly locks into modern dark themes for developer visual safety.
+                Choose your default terminal IDE skin. Currently, DevPulse strictly locks into modern dark themes for developer visual safety.
               </p>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl border border-sky-500 bg-sky-500/5 text-sky-400 flex items-center justify-between shadow-md">
                   <span>Carbon Dark (Active)</span>
@@ -119,7 +119,7 @@ const Settings = () => {
             <div className="space-y-1.5 text-left">
               <h4 className="text-slate-200 text-sm font-bold">Close Terminal Session</h4>
               <p className="text-slate-400 text-xs font-medium">
-                Log out of DevPulse AI from this device. You can sign back in at any time.
+                Log out of DevPulse from this device. You can sign back in at any time.
               </p>
             </div>
             <button

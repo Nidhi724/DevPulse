@@ -1,6 +1,6 @@
-# DevPulse AI - Backend Platform API Documentation
+# DevPulse - Backend Platform API Documentation
 
-DevPulse AI is a production-level, highly scalable, and modular backend system built on **Node.js, Express.js, MongoDB (Mongoose), and OpenAI**. It acts as a comprehensive developer analytics platform that tracks daily coding streaks, parses resume PDF text for automated ATS scoring and optimization matching a Job Description, schedules upcoming coding contests, and audits live public GitHub accounts for contributions, languages, and activity analytics.
+DevPulse is a production-level, highly scalable, and modular backend system built on **Node.js, Express.js, MongoDB (Mongoose), and OpenAI**. It acts as a comprehensive developer analytics platform that tracks daily coding streaks, parses resume PDF text for automated ATS scoring and optimization matching a Job Description, schedules upcoming coding contests, and audits live public GitHub accounts for contributions, languages, and activity analytics.
 
 ---
 

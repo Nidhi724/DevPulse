@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  FiArrowRight, FiActivity, FiZap, FiAward, FiFileText, 
-  FiCalendar, FiCpu, FiCheck, FiGithub 
+import {
+  FiArrowRight, FiActivity, FiZap, FiAward, FiFileText,
+  FiCalendar, FiCpu, FiCheck, FiGithub
 } from 'react-icons/fi';
 
 const Landing = () => {
@@ -39,7 +39,7 @@ const Landing = () => {
             </svg>
           </div>
           <span className="text-md font-black tracking-wider text-slate-50 uppercase">
-            DevPulse AI
+            DevPulse
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ const Landing = () => {
             <FiCpu className="animate-spin" style={{ animationDuration: '4s' }} /> AI-Powered Developer Platform
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             variants={itemVariants}
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-100"
           >
@@ -75,14 +75,14 @@ const Landing = () => {
             </span>
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             variants={itemVariants}
             className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto font-medium leading-relaxed"
           >
-            DevPulse AI synchronizes your public GitHub profile and competitive coding platform scores, offering AI-generated resume optimizations, goal checklists, and gamified streak scoreboards.
+            DevPulse synchronizes your public GitHub profile and competitive coding platform scores, offering AI-generated resume optimizations, goal checklists, and gamified streak scoreboards.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="flex flex-wrap items-center justify-center gap-4 pt-4"
           >
@@ -106,10 +106,10 @@ const Landing = () => {
         >
           {/* Glowing border element */}
           <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 to-sky-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl -z-10 blur-xl"></div>
-          
+
           <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col items-center justify-center relative">
             <div className="absolute w-[200px] h-[200px] bg-sky-500/10 rounded-full blur-[70px]"></div>
-            
+
             {/* Visual SaaS Cockpit mockup */}
             <div className="w-4/5 h-3/4 rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm p-6 space-y-6 flex flex-col justify-between select-none relative shadow-xl">
               <div className="flex items-center justify-between">
@@ -243,7 +243,7 @@ const Landing = () => {
             Our Advanced AI Analyzer
           </h2>
           <p className="text-slate-400 text-sm font-medium leading-relaxed">
-            Directly upload your PDF developer resume, paste your target Job Description, and DevPulse AI will immediately extract text to compute your ATS matching rating.
+            Directly upload your PDF developer resume, paste your target Job Description, and DevPulse will immediately extract text to compute your ATS matching rating.
           </p>
           <ul className="space-y-3 font-semibold text-xs text-slate-300">
             <li className="flex items-center gap-2.5">
@@ -266,7 +266,7 @@ const Landing = () => {
               <span className="text-xs font-bold text-slate-300">resume_v2_backend.pdf</span>
               <span className="text-xs font-bold text-sky-400">PDF Document</span>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-black text-lg">
                 82%
@@ -299,14 +299,14 @@ const Landing = () => {
             Developer Testimonials
           </h2>
           <p className="text-slate-400 text-sm max-w-xl mx-auto font-medium">
-            Discover how students and backend engineers leverage DevPulse AI.
+            Discover how students and backend engineers leverage DevPulse.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="glass-card p-6 border-slate-800 bg-slate-900/30 flex flex-col justify-between gap-6">
             <p className="text-slate-300 text-sm font-medium leading-relaxed italic">
-              "Connecting my GitHub and competitive coding usernames to DevPulse AI has completely automated my practice habits. Seeing my devScore grow based on actual commits and LeetCode solves gamifies my productivity."
+              "Connecting my GitHub and competitive coding usernames to DevPulse has completely automated my practice habits. Seeing my devScore grow based on actual commits and LeetCode solves gamifies my productivity."
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center font-extrabold text-sm border border-sky-500/20">
@@ -349,7 +349,7 @@ const Landing = () => {
             </p>
             <div className="pt-4">
               <Link to="/register" className="glow-btn py-3.5 px-8 text-sm inline-flex items-center gap-2">
-                Join DevPulse AI Now <FiArrowRight />
+                Join DevPulse Now <FiArrowRight />
               </Link>
             </div>
           </div>
@@ -363,10 +363,10 @@ const Landing = () => {
             <div className="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-black text-xs">
               DP
             </div>
-            <span className="text-slate-400 font-bold tracking-wider uppercase">DevPulse AI</span>
+            <span className="text-slate-400 font-bold tracking-wider uppercase">DevPulse</span>
           </div>
           <p className="font-medium">
-            &copy; {new Date().getFullYear()} DevPulse AI. All developer rights reserved. Developed with pair-programming expertise.
+            &copy; {new Date().getFullYear()} DevPulse. All developer rights reserved. Developed with pair-programming expertise.
           </p>
         </div>
       </footer>

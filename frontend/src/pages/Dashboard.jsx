@@ -80,7 +80,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <Loading fullScreen={false} message="Loading DevPulse AI Dashboard metrics..." />;
+    return <Loading fullScreen={false} message="Loading DevPulse Dashboard metrics..." />;
   }
 
   // Fallback defaults for new accounts with no synced profile data yet

@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 const Achievements = () => {
   const { profile } = useAuth();
-  
+
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ const Achievements = () => {
   }, [profile]);
 
   if (loading) {
-    return <Loading fullScreen={false} message="Unlocking DevPulse AI Badges room..." />;
+    return <Loading fullScreen={false} message="Unlocking DevPulse Badges room..." />;
   }
 
   const leetcodeSolved = dashboard?.leetcode?.solved || 0;

@@ -87,7 +87,7 @@ const Register = () => {
                 <path d="M30 50 H45 L52 25 L60 75 L68 50 H70" />
               </svg>
             </div>
-            <span className="text-md font-black tracking-wider text-slate-100 uppercase">DevPulse AI</span>
+            <span className="text-md font-black tracking-wider text-slate-100 uppercase">DevPulse</span>
           </Link>
           <h2 className="text-xl font-bold text-slate-200">Register Account</h2>
           <p className="text-slate-400 text-xs mt-1.5 font-medium">Initialize your developer dashboard console</p>
@@ -96,10 +96,10 @@ const Register = () => {
         {/* Register form Card */}
         <div className="glass-card p-8 border-slate-800 shadow-2xl relative">
           <form onSubmit={handleSubmit} className="space-y-4">
-            
+
             {/* Display validation error alert */}
             {error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 className="p-3 text-xs font-semibold rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-center"

@@ -1,6 +1,6 @@
 const path = require('path');
 
-console.log('🧪 Starting DevPulse AI Backend syntax & dependency verification test...');
+console.log('🧪 Starting DevPulse Backend syntax & dependency verification test...');
 
 try {
   // Mock ENV variables so the self-validating configuration doesn't block loading

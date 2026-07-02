@@ -1,25 +1,49 @@
-import React, { useState } from 'react';
-import { resumeAPI } from '../services/api';
-import { 
-  FiFileText, FiUploadCloud, FiCpu, FiCheckCircle, 
-  FiAlertTriangle, FiBookOpen, FiArrowRight, FiPercent, FiTrash2 
-} from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { resumeAPI } from "../services/api";
+import {
+  FiFileText,
+  FiUploadCloud,
+  FiCpu,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiBookOpen,
+  FiArrowRight,
+  FiPercent,
+  FiTrash2,
+} from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 const ResumeAnalyzer = () => {
   const [file, setFile] = useState(null);
-  const [jobDescription, setJobDescription] = useState('');
+  const [jobDescription, setJobDescription] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
   const [tailorResults, setTailorResults] = useState(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      toast.success(`Loaded file: ${selectedFile.name}`);
+
+    if (!selectedFile) return;
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(selectedFile.type)) {
+      toast.error("Only PDF, DOC and DOCX files are allowed");
+      return;
     }
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    setFile(selectedFile);
+    toast.success(`Loaded file: ${selectedFile.name}`);
   };
 
   const handleDragOver = (e) => {
@@ -30,13 +54,17 @@ const ResumeAnalyzer = () => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) {
-      const allowedExt = ['.pdf', '.doc', '.docx'];
-      const fileExt = droppedFile.name.substring(droppedFile.name.lastIndexOf('.')).toLowerCase();
+      const allowedExt = [".pdf", ".doc", ".docx"];
+      const fileExt = droppedFile.name
+        .substring(droppedFile.name.lastIndexOf("."))
+        .toLowerCase();
       if (allowedExt.includes(fileExt)) {
         setFile(droppedFile);
         toast.success(`Dropped file: ${droppedFile.name}`);
       } else {
-        toast.error('Invalid file format. Only PDF and Word documents are supported!');
+        toast.error(
+          "Invalid file format. Only PDF and Word documents are supported!",
+        );
       }
     }
   };
@@ -44,15 +72,18 @@ const ResumeAnalyzer = () => {
   const handleClearFile = () => {
     setFile(null);
   };
-
   const handleAnalyze = async (e) => {
     e.preventDefault();
+
     if (!file) {
-      toast.error('Please upload your resume file first.');
+      toast.error("Please upload your resume first.");
       return;
     }
+
     if (!jobDescription || jobDescription.trim().length < 10) {
-      toast.error('Please paste a realistic Job Description (at least 10 characters).');
+      toast.error(
+        "Please enter a valid Job Description (minimum 10 characters).",
+      );
       return;
     }
 
@@ -61,65 +92,63 @@ const ResumeAnalyzer = () => {
     setTailorResults(null);
 
     try {
-      // 1. Upload Resume File
       const formData = new FormData();
-      formData.append('resume', file);
-      
-      toast.loading('Uploading resume document...', { id: 'resume-step' });
+      formData.append("resume", file);
+
+      toast.loading("Uploading resume...", {
+        id: "resume-step",
+      });
+
       const uploadRes = await resumeAPI.upload(formData);
-      
-      if (uploadRes.data.success) {
-        toast.loading('Analyzing text & running ATS compliance audit...', { id: 'resume-step' });
-        
-        // Simulating robust text extraction based on standard templates for the analyzer body
-        const mockExtractText = `John Doe - Backend Developer. Skills: Node.js, Express.js, MongoDB, JavaScript, API design, database schemas, Git, REST routing. Experience: Built modular Express APIs, structured mongoose data indexes, resolved 200+ competitive programming questions.`;
 
-        // 2. Query ATS Analyzer
-        const analyzeRes = await resumeAPI.analyze({
-          resumeText: mockExtractText,
-          jobDescription: jobDescription
+      if (!uploadRes.data.success) {
+        throw new Error(uploadRes.data.message || "Resume upload failed");
+      }
+
+      const extractedText =
+        uploadRes.data.resumeText || uploadRes.data.extractedText;
+
+      if (!extractedText) {
+        throw new Error("Could not extract text from resume");
+      }
+
+      toast.loading("Running ATS analysis...", { id: "resume-step" });
+
+      const [analyzeRes, tailorRes] = await Promise.all([
+        resumeAPI.analyze({
+          resumeText: extractedText,
+          jobDescription,
+        }),
+
+        resumeAPI.tailor({
+          resumeText: extractedText,
+          jobDescription,
+        }),
+      ]);
+
+      if (analyzeRes.data.success && tailorRes.data.success) {
+        setResults(analyzeRes.data);
+        setTailorResults(tailorRes.data);
+
+        toast.success("Resume analyzed successfully!", {
+          id: "resume-step",
         });
-
-        // 3. Query AI Resume Tailor
-        const tailorRes = await resumeAPI.tailor({
-          resumeText: mockExtractText,
-          jobDescription: jobDescription
-        });
-
-        if (analyzeRes.data.success && tailorRes.data.success) {
-          setResults(analyzeRes.data);
-          setTailorResults(tailorRes.data);
-          toast.success('ATS analysis completed successfully!', { id: 'resume-step' });
-        }
+      } else {
+        throw new Error("Analysis service returned an error");
       }
     } catch (error) {
-      console.error('Resume audit failed:', error);
-      toast.error(error.message || 'ATS Resume analysis failed. Please verify configurations.', { id: 'resume-step' });
-      
-      // Fallback preview results in case local node process uploads directories are missing
-      setResults({
-        atsScore: 78,
-        matchedSkills: ['Node.js', 'Express.js', 'MongoDB', 'Git'],
-        missingSkills: ['TypeScript', 'Docker', 'AWS Lambda', 'Redux'],
-        suggestions: [
-          'Add more keywords from the job description (TypeScript, Docker)',
-          'Highlight experience with cloud integrations (AWS)',
-          'Quantify database performance metrics in project descriptions',
-          'Include technical state management libraries (Redux)'
-        ]
-      });
-      setTailorResults({
-        tailoredSummary: `Highly competent backend engineer experienced in Node.js, Express, and MongoDB. Proven track record structure cleaner REST APIs and database indexes. Eager to integrate Docker, TypeScript and AWS serverless models to streamline software delivery.`,
-        projectSuggestions: [
-          'Design a mock deployment architecture utilizing Docker containers',
-          'Tweak portfolio description to mention AWS microservices'
-        ]
-      });
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message || error.message || "Analysis failed",
+        {
+          id: "resume-step",
+        },
+      );
     } finally {
       setAnalyzing(false);
     }
   };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -132,12 +161,12 @@ const ResumeAnalyzer = () => {
           AI Resume Optimizer
         </h2>
         <p className="text-slate-400 text-xs mt-1 font-medium">
-          Audit resume compliance parameters against Job Descriptions and generate optimized summary structures
+          Audit resume compliance parameters against Job Descriptions and
+          generate optimized summary structures
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         {/* Left Column: Drag/Drop File Upload & Paste JD */}
         <div className="lg:col-span-1 space-y-6">
           <div className="glass-card p-6 border-slate-800 space-y-6">
@@ -208,8 +237,10 @@ const ResumeAnalyzer = () => {
               disabled={analyzing}
               className="w-full glow-btn text-xs py-3 flex items-center justify-center gap-1.5"
             >
-              <FiCpu className={analyzing ? 'animate-spin' : ''} /> 
-              <span>{analyzing ? 'Evaluating Audit...' : 'Audit Resume ATS Score'}</span>
+              <FiCpu className={analyzing ? "animate-spin" : ""} />
+              <span>
+                {analyzing ? "Evaluating Audit..." : "Audit Resume ATS Score"}
+              </span>
             </button>
           </div>
         </div>
@@ -223,8 +254,12 @@ const ResumeAnalyzer = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                className="glass-card p-10 text-center"
               >
-                <Loading skeleton={true} count={3} message="Performing advanced AI ATS matching evaluation..." />
+                <FiCpu className="w-10 h-10 mx-auto animate-spin text-sky-400 mb-4" />
+                <p className="text-slate-300 font-medium">
+                  Analyzing Resume...
+                </p>
               </motion.div>
             ) : results ? (
               // Results dashboard details
@@ -239,9 +274,15 @@ const ResumeAnalyzer = () => {
                   {/* ATS Gauge Card */}
                   <div className="glass-card p-6 border-slate-800 flex items-center justify-between bg-slate-900/40">
                     <div className="space-y-2 text-left">
-                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">ATS SCORE</span>
-                      <h3 className="text-3xl font-extrabold text-slate-200 leading-none">{results.atsScore}%</h3>
-                      <span className="text-[10px] font-semibold text-slate-400 block">Rating evaluation match</span>
+                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">
+                        ATS SCORE
+                      </span>
+                      <h3 className="text-3xl font-extrabold text-slate-200 leading-none">
+                        {results.atsScore}%
+                      </h3>
+                      <span className="text-[10px] font-semibold text-slate-400 block">
+                        Rating evaluation match
+                      </span>
                     </div>
                     <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-lg">
                       <FiPercent />
@@ -251,9 +292,15 @@ const ResumeAnalyzer = () => {
                   {/* Skills Matched count */}
                   <div className="glass-card p-6 border-slate-800 flex items-center justify-between bg-slate-900/40">
                     <div className="space-y-2 text-left">
-                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">MATCHED SKILLS</span>
-                      <h3 className="text-3xl font-extrabold text-slate-200 leading-none">{results.matchedSkills?.length || 0}</h3>
-                      <span className="text-[10px] font-semibold text-slate-400 block">Keywords Compliance</span>
+                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">
+                        MATCHED SKILLS
+                      </span>
+                      <h3 className="text-3xl font-extrabold text-slate-200 leading-none">
+                        {results.matchedSkills?.length || 0}
+                      </h3>
+                      <span className="text-[10px] font-semibold text-slate-400 block">
+                        Keywords Compliance
+                      </span>
                     </div>
                     <div className="w-14 h-14 rounded-2xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center font-bold text-lg">
                       <FiBookOpen />
@@ -263,9 +310,15 @@ const ResumeAnalyzer = () => {
                   {/* Skills Missing count */}
                   <div className="glass-card p-6 border-slate-800 flex items-center justify-between bg-slate-900/40">
                     <div className="space-y-2 text-left">
-                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">MISSING KEYWORDS</span>
-                      <h3 className="text-3xl font-extrabold text-amber-400 leading-none">{results.missingSkills?.length || 0}</h3>
-                      <span className="text-[10px] font-semibold text-slate-400 block">Identified in JD</span>
+                      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider block">
+                        MISSING KEYWORDS
+                      </span>
+                      <h3 className="text-3xl font-extrabold text-amber-400 leading-none">
+                        {results.missingSkills?.length || 0}
+                      </h3>
+                      <span className="text-[10px] font-semibold text-slate-400 block">
+                        Identified in JD
+                      </span>
                     </div>
                     <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-lg">
                       <FiAlertTriangle />
@@ -281,7 +334,10 @@ const ResumeAnalyzer = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {results.missingSkills.map((s, i) => (
-                        <span key={i} className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-sm">
+                        <span
+                          key={i}
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-sm"
+                        >
                           {s}
                         </span>
                       ))}
@@ -296,7 +352,10 @@ const ResumeAnalyzer = () => {
                   </h4>
                   <div className="space-y-2.5">
                     {results.suggestions?.map((item, index) => (
-                      <div key={index} className="flex items-start gap-2.5 text-xs text-slate-350 p-2.5 rounded-xl bg-slate-950/60 border border-slate-900 leading-relaxed font-semibold">
+                      <div
+                        key={index}
+                        className="flex items-start gap-2.5 text-xs text-slate-350 p-2.5 rounded-xl bg-slate-950/60 border border-slate-900 leading-relaxed font-semibold"
+                      >
                         <FiCheckCircle className="text-sky-400 w-4 h-4 flex-shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </div>
@@ -323,7 +382,9 @@ const ResumeAnalyzer = () => {
                 <div className="space-y-1">
                   <p>📊 No audit data evaluated yet.</p>
                   <p className="text-[10px] text-slate-600 font-semibold max-w-sm mx-auto leading-relaxed">
-                    Choose your PDF developer resume, paste the target Job Description guidelines on the left panel, and launch the audit console to track optimization matching scores.
+                    Choose your PDF developer resume, paste the target Job
+                    Description guidelines on the left panel, and launch the
+                    audit console to track optimization matching scores.
                   </p>
                 </div>
               </div>

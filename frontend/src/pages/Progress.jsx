@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Progress = () => {
   const { profile } = useAuth();
-  
+
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLogging, setIsLogging] = useState(false);
@@ -31,7 +31,7 @@ const Progress = () => {
       const res = await progressAPI.getProgress();
       if (res.data.success) {
         setHistory(res.data.progress);
-        
+
         // Populate default handles if available
         if (res.data.progress.length > 0) {
           const latest = res.data.progress[0];
@@ -60,9 +60,9 @@ const Progress = () => {
 
   const handleInputChange = (e) => {
     const isNum = ['githubFollowers', 'githubRepos', 'leetcodeSolved', 'codeforcesRating', 'atsScore'].includes(e.target.name);
-    setFormData({ 
-      ...formData, 
-      [e.target.name]: isNum ? parseInt(e.target.value) || 0 : e.target.value 
+    setFormData({
+      ...formData,
+      [e.target.name]: isNum ? parseInt(e.target.value) || 0 : e.target.value
     });
   };
 
@@ -84,7 +84,7 @@ const Progress = () => {
   };
 
   if (loading) {
-    return <Loading fullScreen={false} message="Loading DevPulse AI Growth Timeline..." />;
+    return <Loading fullScreen={false} message="Loading DevPulse Growth Timeline..." />;
   }
 
   // Create Recharts-compatible chronology data
@@ -135,7 +135,7 @@ const Progress = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Column: Form overlay */}
         <AnimatePresence mode="wait">
           {isLogging && (
@@ -222,7 +222,7 @@ const Progress = () => {
 
         {/* Right Columns: Chart and vertical chronological timeline */}
         <div className={isLogging ? 'lg:col-span-2 space-y-8' : 'col-span-3 space-y-8'}>
-          
+
           {/* Chart Grid */}
           <div className="glass-card p-6 border-slate-800 space-y-4">
             <div className="pb-3 border-b border-slate-800/60">
@@ -235,14 +235,14 @@ const Progress = () => {
                 <AreaChart data={activeChartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorCurve" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#38BDF8" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#38BDF8" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" opacity={0.4} />
                   <XAxis dataKey="name" stroke="#475569" />
                   <YAxis stroke="#475569" />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B', borderRadius: '12px' }}
                     labelStyle={{ color: '#94A3B8', fontWeight: 'bold' }}
                   />
@@ -263,10 +263,10 @@ const Progress = () => {
             <div className="relative border-l border-slate-800 pl-6 space-y-8 ml-3 py-2">
               {history.length > 0 ? (
                 history.map((log, index) => {
-                  const dateStr = new Date(log.createdAt).toLocaleDateString(undefined, { 
-                    month: 'short', 
-                    day: 'numeric', 
-                    year: 'numeric' 
+                  const dateStr = new Date(log.createdAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
                   });
                   return (
                     <div key={log._id} className="relative group">
@@ -279,7 +279,7 @@ const Progress = () => {
                         <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest block">
                           {dateStr}
                         </span>
-                        
+
                         <div className="flex flex-wrap items-center gap-4">
                           <span className="text-xs font-bold text-slate-200 flex items-center gap-1">
                             <FiCode className="text-green-500" /> {log.leetcodeSolved || 0} Problems Solved

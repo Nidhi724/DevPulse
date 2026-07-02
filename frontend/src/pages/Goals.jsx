@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Goals = () => {
   const { profile } = useAuth();
-  
+
   const [goals, setGoals] = useState(null);
   const [dashboard, setDashboard] = useState(null);
-  
+
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -25,7 +25,7 @@ const Goals = () => {
   const fetchGoalMetrics = async () => {
     try {
       setLoading(true);
-      
+
       // Load current goals
       try {
         const goalRes = await goalAPI.getGoal();
@@ -92,7 +92,7 @@ const Goals = () => {
   };
 
   if (loading) {
-    return <Loading fullScreen={false} message="Loading DevPulse AI Goals..." />;
+    return <Loading fullScreen={false} message="Loading DevPulse Goals..." />;
   }
 
   const leetcodeCurrent = dashboard?.leetcode?.solved || 0;
@@ -127,7 +127,7 @@ const Goals = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Columns: Config form */}
         <AnimatePresence mode="wait">
           {isEditing && (
@@ -215,30 +215,30 @@ const Goals = () => {
 
         {/* Right Columns: Animated progress bars list */}
         <div className={isEditing ? 'lg:col-span-2 space-y-6' : 'col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6'}>
-          <GoalCard 
-            title="LeetCode Solved Problems" 
-            current={leetcodeCurrent} 
-            target={goals?.leetcodeGoal || 100} 
-            color="green" 
-            suffix=" Solved" 
+          <GoalCard
+            title="LeetCode Solved Problems"
+            current={leetcodeCurrent}
+            target={goals?.leetcodeGoal || 100}
+            color="green"
+            suffix=" Solved"
           />
-          <GoalCard 
-            title="GitHub Public Repositories" 
-            current={githubCurrent} 
-            target={goals?.githubGoal || 15} 
-            color="blue" 
-            suffix=" Repos" 
+          <GoalCard
+            title="GitHub Public Repositories"
+            current={githubCurrent}
+            target={goals?.githubGoal || 15}
+            color="blue"
+            suffix=" Repos"
           />
-          <GoalCard 
-            title="Codeforces Active Rating" 
-            current={codeforcesCurrent} 
-            target={goals?.codeforcesGoal || 1200} 
-            color="yellow" 
-            suffix=" Rating" 
+          <GoalCard
+            title="Codeforces Active Rating"
+            current={codeforcesCurrent}
+            target={goals?.codeforcesGoal || 1200}
+            color="yellow"
+            suffix=" Rating"
           />
         </div>
       </div>
-      
+
       {/* Dynamic onboarding encouragement banner */}
       <div className="glass-card p-6 border-slate-800/80 bg-slate-900/10 flex items-start gap-4 text-left">
         <FiAward className="text-sky-400 w-6 h-6 flex-shrink-0 mt-0.5" />

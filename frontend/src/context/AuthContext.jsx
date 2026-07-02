@@ -42,11 +42,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const res = await authAPI.login({ email, password });
-      
+
       if (res.data.success) {
         localStorage.setItem('devpulse_token', res.data.token);
         setUser(res.data.user);
-        
+
         // Fetch detailed profile
         try {
           const profRes = await profileAPI.getMe();
@@ -56,8 +56,8 @@ export const AuthProvider = ({ children }) => {
         } catch (e) {
           console.error('Failed to load profile details during login', e);
         }
-        
-        toast.success(res.data.message || 'Welcome back to DevPulse AI!');
+
+        toast.success(res.data.message || 'Welcome back to DevPulse!');
         return { success: true };
       }
     } catch (error) {
@@ -74,11 +74,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const res = await authAPI.register({ username, email, password });
-      
+
       if (res.data.success) {
         localStorage.setItem('devpulse_token', res.data.token);
         setUser(res.data.user);
-        
+
         // Fetch initial profile
         try {
           const profRes = await profileAPI.getMe();
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
           console.error('Failed to load initial profile details', e);
         }
 
-        toast.success('Registration successful! Welcome to DevPulse AI.');
+        toast.success('Registration successful! Welcome to DevPulse.');
         return { success: true };
       }
     } catch (error) {

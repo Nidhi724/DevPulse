@@ -30,7 +30,7 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
 
-  res.send("DevPulse AI Backend Running");
+  res.send("DevPulse Backend Running");
 
 });
 

@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import User from "../models/user.model.js";
+import { sendVerificationEmail } from "../services/email.service.js";
 
 
 // REGISTER USER
@@ -28,14 +30,23 @@ export const registerUser = async (req, res) => {
     // hash password
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    // Generate Email Verification Token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
 
+    const verificationTokenExpiry = new Date(
+      Date.now() + 60 * 60 * 1000
+    );
     // create user
 
     const user = await User.create({
 
       username,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+
+      isVerified: false,
+      verificationToken,
+      verificationTokenExpiry
 
     });
 
@@ -49,6 +60,12 @@ export const registerUser = async (req, res) => {
 
       { expiresIn: "7d" }
 
+    );
+
+    await sendVerificationEmail(
+      user.email,
+      user.username,
+      verificationToken
     );
 
     res.status(201).json({
@@ -106,6 +123,17 @@ export const loginUser = async (req, res) => {
 
     }
 
+    // Check if email is verified
+    if (!user.isVerified) {
+
+      return res.status(401).json({
+
+        success: false,
+        message: "Please verify your email before logging in."
+
+      });
+
+    }
     // compare password
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -132,6 +160,7 @@ export const loginUser = async (req, res) => {
       { expiresIn: "7d" }
 
     );
+
 
     res.status(200).json({
 
@@ -185,6 +214,48 @@ export const getMe = async (req, res) => {
       success: false,
       message: error.message
 
+    });
+
+  }
+
+};
+
+// VERIFY EMAIL
+
+export const verifyEmail = async (req, res) => {
+
+  try {
+
+    const { token } = req.params;
+
+    const user = await User.findOne({
+      verificationToken: token,
+      verificationTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired verification token."
+      });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.verificationTokenExpiry = null;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully."
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
     });
 
   }
